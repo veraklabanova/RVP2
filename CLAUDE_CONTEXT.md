@@ -1,7 +1,7 @@
 # RodiceVPeci 2.0 – Kontext projektu pro Claude
 
 > Tento dokument slouží k rychlému navázání práce v nové Claude session.
-> Poslední aktualizace: 2026-02-23
+> Poslední aktualizace: 2026-04-01
 
 ---
 
@@ -19,6 +19,9 @@ Pomáhá koordinovat léky, kalendář, dokumenty, komunikaci a nároky na dávk
 | Testování | Vitest 4.0.18 + @testing-library/react 16 + jsdom 28 |
 | Prostředí | Windows, `D:\___DEV\RodiceVPeci_2.0` |
 | Node | npm (ne yarn/pnpm) |
+| GitHub | https://github.com/veraklabanova/RVP2 |
+| Deploy | Vercel (Root Directory: `app`, preset: Next.js) |
+| Primární barva | #1A73E8 (modrá, změněna z #1E4620 zelená v PAB revizi) |
 
 ---
 
@@ -28,35 +31,37 @@ Pomáhá koordinovat léky, kalendář, dokumenty, komunikaci a nároky na dávk
 RodiceVPeci_2.0/
 ├── .claude/                          # Claude Code nastavení
 │   └── settings.local.json
-├── app/                              # Next.js aplikace
+├── app/                              # Next.js aplikace (= Vercel Root Directory)
 │   ├── src/
 │   │   ├── app/                      # Stránky (App Router)
-│   │   │   ├── dashboard/page.tsx    # Hlavní nástěnka
+│   │   │   ├── dashboard/page.tsx    # Dashboard: 4 karty (léky, termíny, chat feed, compliance)
+│   │   │   ├── leky/page.tsx         # ★ NOVÉ: Lékový asistent (3 taby: Dnes/Plán/Compliance)
+│   │   │   ├── chat/page.tsx         # ★ NOVÉ: Chat inbox (seznam vláken)
 │   │   │   ├── kalendar/page.tsx     # Kalendář péče + externí sync
 │   │   │   ├── nastaveni/            # Nastavení + report
 │   │   │   │   ├── page.tsx
 │   │   │   │   └── report/page.tsx   # Měsíční analytický report
-│   │   │   ├── notifikace/page.tsx   # Notifikační centrum
+│   │   │   ├── notifikace/page.tsx   # Notifikační centrum (swipe L/R, pull-to-refresh)
 │   │   │   ├── onboarding/page.tsx   # Onboarding flow
 │   │   │   ├── pruvodce/             # Průvodce nároky
-│   │   │   │   ├── page.tsx
-│   │   │   │   └── test-naroku/page.tsx  # Smart Test (8 otázek)
-│   │   │   ├── senior-mode/page.tsx  # Zjednodušený UI pro seniory
+│   │   │   │   ├── page.tsx          # Hero Smart Test karta + katalog průvodců
+│   │   │   │   └── test-naroku/page.tsx  # Smart Test (8 otázek, progress save R6)
+│   │   │   ├── senior-mode/page.tsx  # Senior Mode (2-tap 5s, haptic, offline, tab LÉKY/ÚKOLY)
 │   │   │   ├── sos/page.tsx          # SOS krizová karta
-│   │   │   ├── trezor/              # Trezor (léky + dokumenty)
+│   │   │   ├── trezor/              # Trezor (zachováno z F1, ale nav přesměrován na /leky)
 │   │   │   │   ├── page.tsx
 │   │   │   │   └── ocr/page.tsx     # OCR skenování eReceptů
-│   │   │   ├── layout.tsx
+│   │   │   ├── layout.tsx            # Root layout (themeColor: #1A73E8)
 │   │   │   ├── page.tsx             # Root redirect
-│   │   │   └── globals.css
+│   │   │   └── globals.css          # Design tokeny (PAB barvy)
 │   │   ├── components/
 │   │   │   ├── layout/
 │   │   │   │   ├── AppShell.tsx     # Hlavní wrapper (4 nested Context providery)
-│   │   │   │   ├── TopNav.tsx
-│   │   │   │   └── BottomNav.tsx
+│   │   │   │   ├── TopNav.tsx       # Header: avatar+přepínač | sekce | chat+notif
+│   │   │   │   └── BottomNav.tsx    # 5 tabů: Dashboard|Léky|Kalendář|Průvodce|Nastavení
 │   │   │   └── ui/
-│   │   │       ├── ChatBubble.tsx
-│   │   │       ├── ChatThread.tsx    # Chat overlay s paywall logikou
+│   │   │       ├── ChatBubble.tsx   # Chat bublina (sent/pending/failed stavy R14)
+│   │   │       ├── ChatThread.tsx   # Chat overlay (offline R10, audit R12, paywall)
 │   │   │       ├── ComplianceGrid.tsx
 │   │   │       ├── MedicationCheckboxCard.tsx
 │   │   │       ├── NotificationBadge.tsx
@@ -65,31 +70,19 @@ RodiceVPeci_2.0/
 │   │   │   └── mock.ts              # Veškerá mock data (~32 KB)
 │   │   ├── lib/
 │   │   │   ├── types.ts             # Všechny TypeScript typy
-│   │   │   ├── store.ts             # AppContext (activeParent, tier, seniorMode)
+│   │   │   ├── store.ts             # AppContext
 │   │   │   ├── notification-store.ts
 │   │   │   ├── chat-store.ts
 │   │   │   └── medication-store.ts
-│   │   └── __tests__/               # Testy (157 celkem, 0 selhání)
-│   │       ├── setup.ts             # scrollIntoView mock, jest-dom
-│   │       ├── types.test.ts        # 12 testů – typová kompatibilita
-│   │       ├── stores.test.ts       # 2 testy – výchozí hodnoty stores
-│   │       ├── mock-data.test.ts    # 42 testů – integrita mock dat
-│   │       ├── components.test.tsx  # 21 testů – UI komponenty
-│   │       ├── pages.test.tsx       # 21 testů – renderování stránek
-│   │       ├── integration.test.tsx # 24 testů – integrační (SC 2.1–5.2)
-│   │       └── uat.test.tsx         # 35 testů – UAT (SC 2.1–5.1 + AC 1–8)
+│   │   └── __tests__/               # Testy (157 celkem)
 │   ├── vitest.config.ts
 │   ├── package.json
 │   └── tsconfig.json
 ├── archiv_f1/                        # Zálohovaný kód Fáze 1
 ├── dokumentace_f1/                   # Dokumentace Fáze 1
 ├── dokumentace_f2/                   # Dokumentace Fáze 2
-│   ├── *.docx (8 souborů)           # Původní specifikace
-│   ├── dokumentace_f2_komplet.md    # Sloučený markdown všech docx
-│   └── testy/
-│       ├── IntAutTesty.md           # Specifikace integračních testů
-│       └── UATesty.md               # Specifikace UAT testů
-├── start.bat                         # Rychlé spuštění (npm install + kill port + dev)
+├── PAB_Rodice_v_peci_F2_v1.md       # ★ PAB design dokument (oponentní revize) — zdroj pravdy
+├── start.bat                         # Rychlé spuštění
 └── CLAUDE_CONTEXT.md                 # ← Tento soubor
 ```
 
@@ -118,90 +111,73 @@ AppContext → NotificationContext → ChatContext → MedicationContext
 | duo, family | Plný přístup | Plný přístup |
 | freezer | 7 dní | Locked |
 
-### Senior Mode
-- Zjednodušené UI bez navigace
-- Pouze VZAL/A JSEM + TEĎ NE tlačítka
-- Žádné editační funkce
+---
+
+## 4. PAB Oponentní revize (implementováno 2026-04-01)
+
+Zdrojový dokument: `PAB_Rodice_v_peci_F2_v1.md`
+
+### Implementované změny (R1–R15)
+
+| # | Oblast | Co se změnilo | Kde v kódu |
+|---|--------|---------------|------------|
+| R1 | Senior Mode potvrzení | Timeout 2s → **5s** dvoustupňový tap | `senior-mode/page.tsx` |
+| R2 | Lékové karty | Swipe nahrazen **explicitním tlačítkem** "Potvrdit za rodiče" | `leky/page.tsx`, `dashboard/page.tsx` |
+| R3 | Tichý režim | Konfigurovatelná **noční eskalace per lék** (toggle, ikona 🌙) | `types.ts` (nightEscalation), `leky/page.tsx` |
+| R4 | Senior Mode offline | **Offline banner** + lokální potvrzení | `senior-mode/page.tsx` |
+| R5 | Dashboard multi-profil | **Přepínač profilů** v headeru (avatar + dropdown) | `TopNav.tsx` |
+| R6 | Smart Test | **Ukládání progressu** do localStorage + resume dialog | `test-naroku/page.tsx` |
+| R7 | Haptic feedback | **Vibrace 100ms** při potvrzení léku (Vibration API) | `senior-mode/page.tsx` |
+| R8 | Pull-to-refresh | **Ruční sync** indikátor na notifikacích | `notifikace/page.tsx` |
+| R9 | Swipe notifikace | **Swipe doprava** → kontextová primární akce | `notifikace/page.tsx` |
+| R10 | Offline chat | **Offline stav** + fronta zpráv | `ChatThread.tsx` |
+| R11 | Compliance legenda | **Legenda barev** pod mřížkou | `leky/page.tsx`, `dashboard/page.tsx` |
+| R12 | Chat audit trail | **Info banner** o permanenci zpráv (dismiss jednou) | `ChatThread.tsx` |
+| R13 | Párování expirace | Chybový stav pro expirovaný kód | `senior-mode/pairing/page.tsx` |
+| R14 | Chat failed stav | **Stav "neodeslána"** + retry tlačítko | `ChatBubble.tsx` |
+
+### Hlavní strukturální změny
+- **Navigace**: Trezor tab → **Léky tab** (`/leky`), přidán **Chat inbox** (`/chat`)
+- **Barvy**: Primární #1E4620 (zelená) → **#1A73E8 (modrá)**
+- **BottomNav**: Dashboard | **Léky** | Kalendář | Průvodce | Nastavení + badge na Léky
+- **TopNav**: [Avatar+Přepínač] | Název sekce | [💬 Chat] [🔔 Notif]
+- **Dashboard**: 4 karty — Dnešní léky (P0), Termíny (P1), Chat Quick-Feed (P1), Compliance mini (P0)
+- **Typy rozšířeny**: `MedicationStatus` += `escalated` | `confirmed_by_carer`, `Medication` += `note` | `nightEscalation` | `times`, `ChatMessage` += `status` (sent/pending/failed)
 
 ---
 
-## 4. Fáze implementace
+## 5. Navigační mapa
 
-### Fáze 1 (dokončena, archivována v `archiv_f1/`)
-- Základní PWA: dashboard, trezor, kalendář, průvodce, SOS, onboarding
-- 5 stránek, základní layout, mock data
+### Bottom Tab Bar
+| Pozice | Label | Route | Ikona |
+|--------|-------|-------|-------|
+| 1 | Dashboard | /dashboard | 🏠 |
+| 2 | Léky | /leky | 💊 (+ badge nepotvrzených) |
+| 3 | Kalendář | /kalendar | 📅 |
+| 4 | Průvodce | /pruvodce | 🧭 |
+| 5 | Nastavení | /nastaveni | ⚙️ |
 
-### Fáze 2 (dokončena, 7 KROKů)
-| KROK | Feature | Stav |
-|------|---------|------|
-| 0 | Typy + Mock data (Phase 2 rozšíření) | ✅ |
-| 1 | Lékový asistent (MedicationCheckboxCard, ComplianceGrid) | ✅ |
-| 2 | Notifikační centrum (kategorie, filtry, archivace) | ✅ |
-| 3 | Rodinný chat (ChatThread, ChatBubble, @zmínky, paywall) | ✅ |
-| 4 | Smart Test nároků (8 otázek, výsledky, premium lock) | ✅ |
-| 5 | Kalendářní integrace (externí toggle, SyncIndicator) | ✅ |
-| 6 | OCR skenování (scan → review → confirm, confidence score) | ✅ |
-| 7 | Měsíční report (compliance graf, návštěvy, aktivita, export) | ✅ |
-
-**Entry points:**
-- Dashboard → Smart Test CTA karta
-- Trezor → ComplianceGrid + OCR tlačítko
-- Nastavení → Propojené kalendáře + Report link
-
-**Build:** ✅ 15 routes zkompilováno, 0 chyb
+### Skryté routy (bez bottom nav)
+- `/onboarding` — Onboarding flow
+- `/sos` — SOS krizová karta
+- `/senior-mode` — Senior Mode
+- `/chat` — Chat inbox (přístupný z header ikony)
+- `/notifikace` — Notifikační centrum (přístupné z header ikony)
 
 ---
 
-## 5. Testování
+## 6. Design tokeny (globals.css)
 
-### Testovací stack
-```bash
-npm run test        # vitest run (jednorázový běh)
-npm run test:watch  # vitest (watch mode)
-```
-
-### Výsledky (2026-02-23)
-```
-7 souborů | 157 testů | 0 selhání | ~4.4s
-```
-
-| Soubor | Testů | Zaměření |
-|--------|-------|----------|
-| types.test.ts | 12 | Compile-time typová kompatibilita |
-| stores.test.ts | 2 | Výchozí hodnoty stores |
-| mock-data.test.ts | 42 | Integrita všech mock dat |
-| components.test.tsx | 21 | NotificationBadge, MedicationCheckboxCard, ComplianceGrid, SyncIndicator, ChatBubble |
-| pages.test.tsx | 21 | Renderování: Dashboard, Notifikace, Kalendar, Trezor, Nastaveni, Smart Test |
-| integration.test.tsx | 24 | SC 2.1 Eskalace, SC 2.2 Senior, SC 3.1 OCR, SC 4.1 Calendar, SC 5.1 Chat, SC 5.2 Paywall |
-| uat.test.tsx | 35 | UAT 2.1 Snooze, UAT 2.2 Krizová eskalace, UAT 2.3 Offline, UAT 3.1–3.2 Kalendář, UAT 4.1 OCR, UAT 5.1 Retention, AC 1–8 |
-
-### Známé stderr varování (neblokující)
-```
-Cannot update a component (`IntegrationWrapper`/`UATWrapper`) while rendering
-a different component (`ChatThread`).
-```
-→ Způsobeno `getOrCreateThread` voláním `setChatThreads` během renderování ChatThread.
-  Testy prochází, chování je korektní. Oprava vyžaduje refactor do useEffect.
-
-### Testovací vzory
-- **IntegrationWrapper / UATWrapper**: Plná replika AppShell kontextové logiky (~200 řádků)
-- **View toggle pattern**: `useState<'view1' | 'view2'>` uvnitř wrapperu pro cross-view testy (sdílí stav)
-- **Fake timers**: `vi.useFakeTimers()` + `vi.advanceTimersByTime()` pro OCR a Smart Test setTimeout
-- **Mock scrollIntoView**: `Element.prototype.scrollIntoView = () => {}` v setup.ts (jsdom limitation)
-
----
-
-## 6. Klíčové soubory pro editaci
-
-| Soubor | Proč je důležitý |
-|--------|-----------------|
-| `app/src/data/mock.ts` | Centrální zdroj dat (parents, tasks, meds, notifications, chat, OCR, report) |
-| `app/src/lib/types.ts` | Všechny TypeScript interface |
-| `app/src/components/layout/AppShell.tsx` | Hlavní wrapper s 4 context providery |
-| `app/src/components/ui/ChatThread.tsx` | Chat overlay + paywall logika (7-day filter) |
-| `app/src/app/senior-mode/page.tsx` | Senior Mode UI (VZAL/A JSEM, TEĎ NE) |
-| `app/src/app/trezor/ocr/page.tsx` | OCR flow (ready → scanning → results → applied) |
-| `app/vitest.config.ts` | Vitest konfigurace (@/ alias, jsdom, react plugin) |
+| Token | HEX | Použití |
+|-------|-----|---------|
+| --color-primary | #1A73E8 | Navigace, aktivní prvky, odkazy |
+| --color-medication | #7B1FA2 | Léky, compliance, připomínky |
+| --color-chat | #00796B | Chat bubliny, rodinná komunikace |
+| --color-compliance-ok | #43A047 | Podáno, úspěch |
+| --color-compliance-miss | #E53935 | Vynecháno, eskalace, chyba |
+| --color-offline | #FFF9C4 | Offline bannery |
+| --color-chat-own | #E0F2F1 | Vlastní chat bubliny |
+| --color-chat-other | #F5F5F5 | Cizí chat bubliny |
 
 ---
 
@@ -215,29 +191,50 @@ npm run build        # Produkční build
 npm run test         # Všechny testy (vitest run)
 npm run test:watch   # Testy v watch mode
 
-# Rychlý start (Windows)
-D:\___DEV\RodiceVPeci_2.0\start.bat
+# Git
+cd D:\___DEV\RodiceVPeci_2.0
+git add ... && git commit && git push   # Auto-deploy na Vercel
 ```
 
 ---
 
-## 8. Co dělat dál (možné další kroky)
+## 8. Deploy (Vercel)
 
-1. **Refactor ChatThread**: Opravit `getOrCreateThread` volání v renderování → přesunout do `useEffect` (odstraní stderr warning)
-2. **E2E testy**: Přidat Playwright/Cypress pro end-to-end testování
-3. **Backend integrace**: Nahradit mock data skutečným API
-4. **PWA manifest**: Service worker, offline podpora, push notifikace
-5. **Accessibility audit**: ARIA labels, keyboard navigation, screen reader
-6. **Performance**: React.memo, useMemo pro velké seznamy, lazy loading stránek
+| Nastavení | Hodnota |
+|-----------|---------|
+| GitHub repo | veraklabanova/RVP2 |
+| Root Directory | `app` (MUSÍ být nastaveno v UI při vytváření projektu) |
+| Framework Preset | Next.js |
+| Branch | main |
+| Auto-deploy | Ano (při push na main) |
+
+**Pozor:** `rootDirectory` v `vercel.json` NEFUNGUJE — musí se nastavit v Vercel dashboard UI při importu projektu.
 
 ---
 
-## 9. Důležité poznámky pro Claude
+## 9. Co dělat dál (možné další kroky)
 
-- **Path**: Vždy používej `/d/___DEV/RodiceVPeci_2.0/app` (forward slashes) pro bash příkazy
-- **Windows**: Projekt běží na Windows, ale bash přes Git Bash/WSL
-- **Mock data**: Všechna data v `mock.ts` – datumy jsou z ledna 2024
+1. **Testy aktualizovat**: Stávající testy (157) se mohou rozbít kvůli změnám v navigaci (Trezor → Léky) a dashboard layout
+2. **Refactor ChatThread**: Opravit `getOrCreateThread` volání v renderování → přesunout do `useEffect`
+3. **Přidat lék formulář**: `/leky/pridat` — formulář dle PAB doc (název, dávkování, frekvence, časy, poznámka, noční eskalace toggle)
+4. **Detail léku**: `/leky/[id]` — kompletní info + mini compliance + kontextový chat
+5. **Senior Mode Denní shrnutí**: Obrazovka ve 21:00 s přehledem dne
+6. **Správa sync kalendáře**: OAuth propojení Google Calendar
+7. **Mrazák screen**: Soft paywall overlay při Premium funkci
+8. **E2E testy**: Playwright/Cypress
+9. **Backend integrace**: Nahradit mock data API
+10. **PWA manifest**: Service worker, push notifikace
+
+---
+
+## 10. Důležité poznámky pro Claude
+
+- **Path**: Vždy používej `D:/___DEV/RodiceVPeci_2.0/app` pro bash příkazy
+- **Windows**: Projekt běží na Windows
+- **Mock data**: Všechna data v `mock.ts` — datumy jsou z ledna 2024
 - **Paywall testy**: Mock zprávy jsou z 2024 → pro trial/standard jsou vždy za paywallem (>7 dní)
 - **Senior Mode**: `activeParent` default je `'mama'` → 3 waiting léky (ms-2, ms-3, ms-4)
 - **Import alias**: `@/` = `app/src/` (konfigurováno v tsconfig.json i vitest.config.ts)
 - **Jazyk**: UI je v češtině, kód a komentáře mix CZ/EN
+- **PAB dokument**: `PAB_Rodice_v_peci_F2_v1.md` je zdroj pravdy pro UI/UX design — obsahuje kompletní specifikaci všech obrazovek, stavů, interakcí a design tokenů
+- **Stará route /trezor**: Stále existuje v kódu (zachována), ale v navigaci je nahrazena /leky
