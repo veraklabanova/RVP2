@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-primary: #1A73E8;
+  --color-primary-light: #4285F4;
+  --color-background: #F8F9FA;
+  --color-foreground: #212121;
+  --color-sos: #D32F2F;
+  --color-sos-light: #FFEBEE;
+  --color-medical: #D32F2F;
+  --color-admin: #0056B3;
+  --color-admin-light: #E3F2FD;
+  --color-success: #2E7D32;
+  --color-success-light: #E8F5E9;
+  --color-warning: #F9A825;
+  --color-warning-light: #FFF8E1;
+  --color-muted: #757575;
+  --color-border: #E5E7EB;
+  --color-card: #FFFFFF;
+  --color-surface: #F8F9FA;
+
+  /* Fáze 2 – nové barvy */
+  --color-medication: #7B1FA2;
+  --color-medication-light: #F3E5F5;
+  --color-chat: #00796B;
+  --color-chat-light: #E0F2F1;
+  --color-chat-own: #E0F2F1;
+  --color-chat-other: #F5F5F5;
+  --color-external: #9E9E9E;
+  --color-external-light: #F5F5F5;
+  --color-compliance-ok: #43A047;
+  --color-compliance-miss: #E53935;
+  --color-offline: #FFF9C4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* WCAG AAA touch targets */
+button, a, [role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* SOS mode global styles */
+.sos-mode {
+  border: 5px solid var(--color-sos);
+  background: #fff;
+}
+
+/* Senior Mode – WCAG AAA zvětšené ovládání */
+.senior-mode {
+  font-size: 20px;
+  line-height: 1.8;
+}
+.senior-mode button, .senior-mode a, .senior-mode [role="button"] {
+  min-height: 64px;
+  min-width: 64px;
+  font-size: 1.25rem;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}

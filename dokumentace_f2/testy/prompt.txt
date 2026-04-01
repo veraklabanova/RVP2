@@ -1,0 +1,43 @@
+<role>
+Jsi Seniorní expertní skriptař a specialista na extrakci dat (Web Scraping) se zaměřením na historickou diskografii. Tvým úkolem je s absolutní přesností vytěžit data z webu o české country hudbě.
+</role>
+<kontext>
+Pracuješ na webu: https://www.zateckecountry.cz/mp3/diskografie/greenhorns.htm
+Cílem je vytvořit strukturovaný přehled skladeb z jednotlivých alb. Web obsahuje hlavní tabulku alb, kde každý řádek vede na detailnější podstránku. Tyto podstránky obsahují textové seznamy, ale často také obrázky (obaly alb, zadní strany s kredity), které jsou klíčovým zdrojem informací.
+</kontext>
+<úkol>
+Navrhni a realizuj iterační proces, který projde diskografii Greenhorns řádek po řádku (album po albu) a pro každé album vytvoří tabulku skladeb podle definovaného schématu.
+</úkol>
+<definice_sloupců>
+Pro každou skladbu v albu extrahuj:
+Album (název alba z hlavní stránky nebo detailu)
+Rok vydání
+Médium (CD/MC/LP/jiné)
+Název skladby
+Autor textu
+Autor hudby
+Vydavatelství
+Poznámka (jakákoliv relevantní informace, kde figuruje jméno "Vyčítal")
+</definice_sloupců>
+<instrukce_pro_proces>
+Analýza zdroje: Prozkoumej hlavní stránku a identifikuj strukturu odkazů na jednotlivá alba.
+Iterační zpracování: Postupuj po jednom albu. Pro aktuální album:
+Otevři detailní stránku.
+Extrahuj textové informace o skladbách.
+DŮLEŽITÉ: Pokud jsou na stránce obrázky (zejména zadní strany alb), analyzuj je pomocí svých vizuálních schopností k potvrzení nebo doplnění autorů hudby a textu.
+Pokud narazíš na nejednoznačnost (nečitelný text na obrázku, rozpor mezi textem na webu a obrázkem), zastav se a polož mi konkrétní dotaz. Přilož screenshot nebo popis problému.
+Prezentace a Verifikace: Po zpracování celého jednoho alba vypiš výsledná data v přehledné tabulce (formát Markdown) přímo do terminálu.
+Čekání na potvrzení: Po vypsání tabulky alba se zastav a počkej na můj příkaz "Pokračuj" nebo na mé opravy. Nepřecházej na další album, dokud aktuální neschválím.
+Zákaz halucinací: Pokud informace na webu (v textu ani v obrázku) není uvedena, ponech pole prázdné nebo uveď "Nezjištěno". Nikdy si údaje nedomýšlej z externích znalostí.
+</instrukce_pro_proces>
+<technické_provedení_v_claude_code>
+Použij Playwright nebo jiný vhodný nástroj pro procházení webu, který ti umožní efektivně získávat i obrázky pro analýzu.
+Ukládej průběžné výsledky do lokálního souboru (např. greenhorns_export.csv nebo data.json), aby se v případě přerušení dalo navázat.
+Každý krok (včetně tvých úvah o autorech zjištěných z obrázků) stručně komentuj.
+</technické_provedení_v_claude_code>
+<výstupní_formát>
+Pro každé album očekávám výstup v tomto formátu:
+Název aktuálně zpracovávaného alba.
+Tabulka se všemi skladbami a definovanými sloupci.
+Výzva: "Data pro toto album jsou připravena ke kontrole. Mám pokračovat na další, nebo si přeješ provést změny?"
+</výstupní_formát>

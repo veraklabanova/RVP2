@@ -1,0 +1,40 @@
+====================================
+ARCHIV FAZE 1 - Rodice v peci 2.0
+====================================
+Datum archivace: 2026-02-23
+Stav: Faze 1 uzavrena
+
+OBSAH FAZE 1:
+- Onboarding flow s Magic OCR (skenování léku/zpráv)
+- Dashboard s denními prioritami, claim stepperem, rodinnou nástěnkou
+- SOS krizová karta (offline, WCAG AAA)
+- Zdravotní trezor (léky, osobní údaje, dokumenty, audit log)
+- Nárokový průvodce (PnP krokový průvodce, insider tipy, právní survival kit)
+- Kalendář péče (agenda + měsíční pohled)
+- Nastavení (předplatné, rodinný tým, Mrazák režim, export dat)
+
+TECH STACK:
+- Next.js 16.1.6
+- React 19.2.3
+- TailwindCSS 4
+- TypeScript 5
+- PWA (mobile-first)
+
+STRUKTURA:
+src/
+  app/           - Next.js App Router stránky
+    dashboard/   - Hlavní nástěnka
+    sos/         - SOS krizová karta
+    trezor/      - Zdravotní trezor
+    pruvodce/    - Nárokový průvodce
+    kalendar/    - Kalendář péče
+    nastaveni/   - Nastavení aplikace
+    onboarding/  - Úvodní průvodce
+  components/
+    layout/      - AppShell, TopNav, BottomNav
+  lib/           - Typy (types.ts), Store (store.ts)
+  data/          - Mock data (mock.ts)
+
+POZNAMKA:
+Tento archiv neobsahuje node_modules ani .next build.
+Pro reprodukci: npm install && npm run dev

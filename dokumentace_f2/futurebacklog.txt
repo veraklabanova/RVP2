@@ -1,0 +1,5 @@
+Výběr OCR partnera (Tech Spike): Protože Advanced OCR je nyní naše „Killer Feature“, doporučuji mít jasno, které API využijete (např. Google Vision, Mindee, Rossum). Roadmapa s tím počítá v T13, ale je to největší technologické riziko.
+
+Právní validace „Auditního logu“: Máme ho v IA i User Stories. Je dobré mít potvrzeno, že logování přístupů rodinných příslušníků k datům seniora je v souladu s GDPR (oprávněný zájem na bezpečnosti péče).
+
+Marketingový plán pro „Smart Test nároků“: Máme skvělou funkci pro generování leadů, ale budeme potřebovat obsahovou strategii, jak tento test dostat k lidem (např. partnerství s pacientskými organizacemi nebo cílená reklama na Facebooku).
