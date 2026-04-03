@@ -173,10 +173,21 @@ export default function AppShell({ children }: { children: ReactNode }) {
         <ChatContext value={{ threads: chatThreads, getThread, sendMessage, getOrCreateThread }}>
           <MedicationContext value={{ todaySchedule, weekCompliance, confirmMedication, skipMedication }}>
             {!hideShell && <TopNav />}
-            <main className={hideShell ? '' : 'pt-14 pb-20'}>
+            <main className={hideShell ? '' : 'pt-14 pb-24'}>
               <div className="max-w-lg mx-auto">{children}</div>
             </main>
-            {!hideShell && <BottomNav />}
+            {!hideShell && (
+              <>
+                <div className="fixed bottom-14 left-0 right-0 z-40 bg-warning-light border-t border-warning/40">
+                  <div className="max-w-lg mx-auto px-4 py-2">
+                    <p className="text-xs text-foreground/80 text-center">
+                      <strong>Prototyp:</strong> Toto je funkční prototyp pro demonstraci UI/UX. Data jsou fiktivní (do 15.&nbsp;1.&nbsp;2024).
+                    </p>
+                  </div>
+                </div>
+                <BottomNav />
+              </>
+            )}
           </MedicationContext>
         </ChatContext>
       </NotificationContext>

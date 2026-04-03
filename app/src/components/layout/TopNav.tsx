@@ -4,29 +4,22 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useApp } from '@/lib/store';
 import { useNotifications } from '@/lib/notification-store';
-import { useChat } from '@/lib/chat-store';
 import NotificationBadge from '@/components/ui/NotificationBadge';
 
 const sectionNames: Record<string, string> = {
-  '/dashboard': 'Dashboard',
-  '/leky': 'Léky',
+  '/dashboard': 'Nástěnka',
   '/kalendar': 'Kalendář',
+  '/trezor': 'Rodič',
   '/pruvodce': 'Průvodce',
-  '/nastaveni': 'Nastavení',
+  '/nastaveni': 'Tým',
   '/notifikace': 'Upozornění',
+  '/sos': 'SOS',
 };
 
 export default function TopNav() {
   const pathname = usePathname();
   const { state, setActiveParent } = useApp();
   const { state: notifState } = useNotifications();
-  const { threads } = useChat();
-
-  const unreadChatCount = threads.reduce((count, t) => {
-    const unread = t.messages.filter((m) => m.senderId !== '1').length > 0 ? 1 : 0;
-    return count + unread;
-  }, 0);
-
   const sectionTitle = Object.entries(sectionNames).find(([path]) =>
     pathname.startsWith(path)
   )?.[1] || '';
@@ -54,19 +47,14 @@ export default function TopNav() {
           {sectionTitle}
         </span>
 
-        {/* Right: Chat + Notifications */}
+        {/* Right: SOS + Notifications */}
         <div className="flex items-center gap-1.5">
-          {/* Chat Inbox */}
+          {/* SOS Button (PAB f1 6.0) */}
           <Link
-            href="/chat"
-            className="relative flex items-center justify-center h-10 w-10 rounded-lg text-lg hover:bg-surface transition-colors min-h-0 min-w-0"
+            href="/sos"
+            className="flex items-center justify-center h-8 px-2.5 rounded-lg bg-sos text-white text-xs font-bold hover:bg-sos/90 transition-colors min-h-0 min-w-0"
           >
-            <span role="img" aria-label="Zprávy">💬</span>
-            {unreadChatCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 w-[18px] h-[18px] rounded-full bg-primary text-white text-[10px] font-bold flex items-center justify-center leading-none">
-                {unreadChatCount > 9 ? '9+' : unreadChatCount}
-              </span>
-            )}
+            SOS
           </Link>
 
           {/* Notification Bell */}

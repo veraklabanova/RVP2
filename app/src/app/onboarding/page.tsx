@@ -33,21 +33,37 @@ const situations = [
   },
 ];
 
+const situationCopy: Record<string, string> = {
+  krize: 'To nás mrzí. Zvládneme to. Co teď nejvíc hoří?',
+  pamet: 'Rozumíme, že je to těžké. Pojďme to společně zvládnout.',
+  stari: 'Jste skvělí, že se staráte. Pojďme to zorganizovat.',
+  admin: 'Dobrá zpráva — tohle zvládneme rychle a přehledně.',
+};
+
+const priorities = [
+  { id: 'pece', label: 'Potřebuji zařídit domácí péči' },
+  { id: 'finance', label: 'Potřebuji vyřídit peníze (příspěvky, dávky)' },
+  { id: 'doklady', label: 'Nevím, kde má rodič doklady a léky' },
+  { id: 'pravni', label: 'Potřebuji vyřešit právní věci (plná moc apod.)' },
+];
+
 export default function OnboardingPage() {
   const [step, setStep] = useState(1);
   const [situation, setSituation] = useState<Situation>(null);
-  const [scanning, setScanning] = useState(false);
-  const [scanned, setScanned] = useState(false);
+  const [selectedPriorities, setSelectedPriorities] = useState<Set<string>>(new Set());
   const router = useRouter();
   const { completeOnboarding } = useApp();
 
-  const handleMagicEntry = () => {
-    setScanning(true);
-    setTimeout(() => {
-      setScanning(false);
-      setScanned(true);
-      setStep(3);
-    }, 2500);
+  const togglePriority = (id: string) => {
+    setSelectedPriorities((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
   };
 
   const handleComplete = () => {
@@ -85,25 +101,6 @@ export default function OnboardingPage() {
               Vyberte situaci a my vám připravíme plán na míru.
             </p>
 
-            {/* Magic Entry CTA */}
-            <button
-              onClick={() => setStep(2)}
-              className="w-full bg-primary text-white rounded-xl p-5 mb-6 text-left hover:bg-primary-light transition-colors"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-3xl">📸</span>
-                <span className="text-lg font-bold">Skutečně jednoduchý start</span>
-              </div>
-              <p className="text-sm opacity-90">
-                Máte u sebe lékařskou zprávu nebo léky? Vyfoťte je. My data nahrajeme za vás,
-                abyste nemuseli nic vypisovat.
-              </p>
-            </button>
-
-            <p className="text-sm text-muted mb-3 font-medium">
-              Nebo vyberte svou situaci:
-            </p>
-
             <div className="grid grid-cols-2 gap-3">
               {situations.map((s) => (
                 <button
@@ -137,110 +134,99 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {/* Step 2: Magic Onboarding */}
-        {step === 2 && (
+        {/* Step 2: Configuration — priority checklist (PAB f1 7.1 Obrazovka 2) */}
+        {step === 2 && situation && (
           <div>
             <h1 className="text-2xl font-bold text-foreground mb-2">
-              Magic Onboarding
+              {situationCopy[situation]}
             </h1>
             <p className="text-muted mb-6">
-              Vyfoťte lékařskou zprávu, recept nebo krabičku léku. Data vyplníme za vás.
+              Zaškrtněte, co teď potřebujete vyřešit:
             </p>
 
-            {!scanning && !scanned && (
-              <div className="space-y-4">
+            <div className="space-y-3 mb-8">
+              {priorities.map((p) => (
                 <button
-                  onClick={handleMagicEntry}
-                  className="w-full border-2 border-dashed border-primary/40 rounded-xl p-12 flex flex-col items-center gap-3 hover:border-primary hover:bg-success-light/50 transition-all"
+                  key={p.id}
+                  onClick={() => togglePriority(p.id)}
+                  className={`w-full p-4 rounded-xl border text-left transition-all flex items-center gap-3 ${
+                    selectedPriorities.has(p.id)
+                      ? 'border-primary bg-success-light'
+                      : 'border-border bg-white hover:border-primary/40'
+                  }`}
                 >
-                  <span className="text-5xl">📸</span>
-                  <span className="font-semibold text-primary">Vyfotit dokument</span>
-                  <span className="text-sm text-muted">Lékařskou zprávu, recept nebo lékový list</span>
+                  <span
+                    className={`w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                      selectedPriorities.has(p.id)
+                        ? 'border-primary bg-primary text-white'
+                        : 'border-border'
+                    }`}
+                  >
+                    {selectedPriorities.has(p.id) && '✓'}
+                  </span>
+                  <span className="font-medium text-sm">{p.label}</span>
                 </button>
+              ))}
+            </div>
 
-                <button
-                  onClick={handleMagicEntry}
-                  className="w-full border-2 border-dashed border-primary/40 rounded-xl p-8 flex flex-col items-center gap-2 hover:border-primary hover:bg-success-light/50 transition-all"
-                >
-                  <span className="text-3xl">💊</span>
-                  <span className="font-semibold text-primary">Vyfotit krabičku léku</span>
-                </button>
+            <button
+              onClick={() => setStep(3)}
+              disabled={selectedPriorities.size === 0}
+              className={`w-full rounded-xl py-4 font-bold text-lg transition-colors ${
+                selectedPriorities.size > 0
+                  ? 'bg-primary text-white hover:bg-primary-light'
+                  : 'bg-border text-muted cursor-not-allowed'
+              }`}
+            >
+              Sestavit můj plán péče
+            </button>
 
-                <button
-                  onClick={() => {
-                    setScanned(true);
-                    setStep(3);
-                  }}
-                  className="w-full text-center text-muted text-sm py-3 hover:text-foreground transition-colors"
-                >
-                  Přeskočit a vyplnit ručně
-                </button>
-              </div>
-            )}
-
-            {scanning && (
-              <div className="bg-white rounded-xl border border-border p-8 text-center">
-                <div className="relative w-48 h-64 mx-auto mb-4 bg-gray-100 rounded-lg overflow-hidden">
-                  <div className="absolute inset-x-0 h-1 bg-primary animate-bounce" style={{ top: '50%' }} />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-4xl">📄</span>
-                  </div>
-                </div>
-                <p className="font-semibold text-primary animate-pulse">Analyzuji dokument...</p>
-                <p className="text-sm text-muted mt-1">Vytěžuji diagnózy a léky</p>
-              </div>
-            )}
+            <button
+              onClick={() => setStep(1)}
+              className="w-full text-center text-muted text-sm py-3 mt-2 hover:text-foreground transition-colors"
+            >
+              ← Zpět na výběr situace
+            </button>
           </div>
         )}
 
-        {/* Step 3: Confirmation */}
+        {/* Step 3: First Dashboard preview (PAB f1 7.1 Obrazovka 3) */}
         {step === 3 && (
           <div>
             <h1 className="text-2xl font-bold text-foreground mb-2">
-              Kontrola dat
+              Váš plán péče je připraven
             </h1>
             <p className="text-muted mb-6">
-              Zkontrolujte vytěžené údaje a potvrďte je.
+              Připravili jsme pro vás první úkoly. Můžete je upravit na nástěnce.
             </p>
 
-            <div className="space-y-4">
-              {/* Extracted medications */}
-              <div className="bg-white rounded-xl border border-border p-4">
-                <h3 className="font-semibold text-sm text-muted mb-3 uppercase tracking-wide">
-                  Nalezené léky
-                </h3>
-                <div className="space-y-2">
-                  {['Metformin 500 mg', 'Ramipril 5 mg', 'Warfarin 3 mg'].map((med) => (
-                    <label key={med} className="flex items-center gap-3 py-2">
-                      <input type="checkbox" defaultChecked className="w-5 h-5 rounded accent-primary" />
-                      <span className="font-medium">{med}</span>
-                    </label>
-                  ))}
+            <div className="space-y-3 mb-8">
+              {[
+                { icon: '📋', text: 'Vyplnit základní údaje o rodiči', category: 'Profil' },
+                { icon: '💊', text: 'Zapsat seznam užívaných léků', category: 'Zdraví' },
+                { icon: '📞', text: 'Přidat kontakty na lékaře', category: 'Kontakty' },
+                { icon: '📄', text: 'Zjistit nárok na příspěvek na péči', category: 'Úřady' },
+              ].map((task) => (
+                <div
+                  key={task.text}
+                  className="p-4 rounded-xl border border-border bg-white flex items-start gap-3"
+                >
+                  <span className="text-xl">{task.icon}</span>
+                  <div className="flex-1">
+                    <span className="font-medium text-sm block">{task.text}</span>
+                    <span className="text-xs text-muted">{task.category}</span>
+                  </div>
+                  <span className="w-5 h-5 rounded-full border-2 border-border flex-shrink-0 mt-0.5" />
                 </div>
-              </div>
-
-              {/* Extracted diagnoses */}
-              <div className="bg-white rounded-xl border border-border p-4">
-                <h3 className="font-semibold text-sm text-muted mb-3 uppercase tracking-wide">
-                  Nalezené diagnózy
-                </h3>
-                <div className="space-y-2">
-                  {['Diabetes mellitus II. typu', 'Arteriální hypertenze'].map((d) => (
-                    <label key={d} className="flex items-center gap-3 py-2">
-                      <input type="checkbox" defaultChecked className="w-5 h-5 rounded accent-primary" />
-                      <span className="font-medium">{d}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <button
-                onClick={handleComplete}
-                className="w-full bg-primary text-white rounded-xl py-4 font-bold text-lg hover:bg-primary-light transition-colors"
-              >
-                Potvrdit a pokračovat
-              </button>
+              ))}
             </div>
+
+            <button
+              onClick={handleComplete}
+              className="w-full bg-primary text-white rounded-xl py-4 font-bold text-lg hover:bg-primary-light transition-colors"
+            >
+              Přejít na nástěnku
+            </button>
           </div>
         )}
       </div>
