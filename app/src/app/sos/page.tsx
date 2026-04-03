@@ -39,7 +39,7 @@ export default function SOSPage() {
 
         {/* Title */}
         <h1 className="text-center text-xl font-extrabold text-sos uppercase tracking-wide mb-6">
-          Karta pro záchrannou službu
+          Karta pro záchranku
         </h1>
 
         {/* Patient Identity */}

@@ -10,19 +10,19 @@ const situations = [
   {
     id: 'krize' as const,
     icon: '🚨',
-    title: 'Náhlá změna zdraví',
+    title: 'Náhlá krize',
     desc: 'Úraz nebo návrat z nemocnice. Sestavíme krizový plán.',
   },
   {
     id: 'pamet' as const,
     icon: '🧠',
-    title: 'Výpadky paměti',
+    title: 'Paměť a hlava',
     desc: 'Podezření na demenci či Alzheimerovu chorobu. Zajistíme bezpečí.',
   },
   {
     id: 'stari' as const,
     icon: '🤝',
-    title: 'Postupné slábnutí',
+    title: 'Postupné stáří',
     desc: 'Rodič už na všechno sám nestačí. Zorganizujeme pomoc.',
   },
   {
@@ -79,7 +79,7 @@ export default function OnboardingPage() {
         {step === 1 && (
           <div>
             <h1 className="text-2xl font-bold text-foreground mb-2">
-              V jaké situaci se právě nacházíte?
+              S čím dnes potřebujete nejvíce pomoci?
             </h1>
             <p className="text-muted mb-6">
               Vyberte situaci a my vám připravíme plán na míru.
@@ -124,6 +124,16 @@ export default function OnboardingPage() {
                 </button>
               ))}
             </div>
+
+            <button
+              onClick={() => {
+                completeOnboarding();
+                router.push('/dashboard');
+              }}
+              className="w-full text-center text-muted text-sm py-4 mt-4 hover:text-foreground transition-colors"
+            >
+              Jsem tu poprvé a chci si jen prohlédnout aplikaci
+            </button>
           </div>
         )}
 
